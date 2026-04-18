@@ -1,0 +1,27 @@
+node_modules
+.pnpm-store
+.next
+dist
+build
+.env
+.env.local
+.env.*.local
+.turbo
+.vercel
+coverage
+
+# Database
+*.sqlite
+*.db
+
+# Logs
+logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local environment files
+apps/web/.env.local
+packages/database/.env
