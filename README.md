@@ -1,1 +1,1 @@
-# lux-commerce
+# luxe-commerce
