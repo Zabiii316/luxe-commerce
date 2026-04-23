@@ -9,31 +9,29 @@ type ProductCardProps = {
 
 export function ProductCard({ product, index }: ProductCardProps) {
   return (
-    <article className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] transition duration-300 hover:border-[#d6b46a]/50 hover:bg-white/[0.06]">
+    <article className="group overflow-hidden rounded-[2rem] border border-[#e9d8dc] bg-white transition duration-300 hover:border-[#b3132b] hover:shadow-[0_22px_60px_rgba(179,19,43,0.10)]">
       <Link href={`/products/${product.slug}`} aria-label={`View ${product.name}`}>
-        <div className="relative flex aspect-[4/5] items-end overflow-hidden bg-gradient-to-br from-[#2d271f] via-[#16120e] to-black p-6">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(214,180,106,0.22),_transparent_42%)] opacity-70 transition group-hover:scale-105" />
+        <div className="relative flex aspect-[4/5] items-end overflow-hidden bg-[linear-gradient(145deg,_#ffffff,_#fcebed_60%,_#fff7f8)] p-6">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(179,19,43,0.10),_transparent_42%)] opacity-80 transition group-hover:scale-105" />
 
-          <span className="relative rounded-full border border-white/15 bg-black/30 px-4 py-2 text-xs uppercase tracking-[0.25em] text-[#d6b46a]">
+          <span className="relative rounded-full border border-[#e9d8dc] bg-white px-4 py-2 text-xs uppercase tracking-[0.25em] text-[#b3132b]">
             0{index + 1}
           </span>
         </div>
 
         <div className="p-6">
-          <p className="text-xs uppercase tracking-[0.25em] text-[#d6b46a]">
-            {product.category}
-          </p>
+          <p className="text-xs uppercase tracking-[0.25em] text-[#b3132b]">{product.category}</p>
 
-          <h3 className="mt-3 text-2xl font-light text-white">{product.name}</h3>
+          <h3 className="mt-3 text-2xl font-light text-[#181818]">{product.name}</h3>
 
-          <p className="mt-3 line-clamp-2 text-sm leading-6 text-white/50">
+          <p className="mt-3 line-clamp-2 text-sm leading-6 text-[#6b6b6b]">
             {product.shortDescription}
           </p>
 
           <div className="mt-6 flex items-center justify-between">
-            <p className="text-lg text-white/75">{formatPrice(product.price, product.currency)}</p>
+            <p className="text-lg text-[#181818]">{formatPrice(product.price, product.currency)}</p>
 
-            <span className="text-sm uppercase tracking-[0.2em] text-white/45 transition group-hover:text-[#d6b46a]">
+            <span className="text-sm uppercase tracking-[0.2em] text-[#6b6b6b] transition group-hover:text-[#b3132b]">
               View
             </span>
           </div>

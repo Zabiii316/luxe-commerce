@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
+import { Footer } from "@/components/layout/footer";
+import { Navbar } from "@/components/layout/navbar";
 import { getProductBySlug, getProducts } from "@/lib/data/products";
 import { formatPrice } from "@/lib/utils/money";
 
@@ -43,105 +45,111 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-[#0d0b08] px-6 py-28 text-[#f8f2e8]">
-      <section className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="space-y-5">
-          <Link
-            href="/products"
-            className="inline-flex text-sm uppercase tracking-[0.25em] text-white/45 transition hover:text-[#d6b46a]"
-          >
-            ← Back to catalogue
-          </Link>
+    <main className="min-h-screen bg-white text-[#181818]">
+      <Navbar />
 
-          <div className="grid gap-5 md:grid-cols-2">
-            <div className="flex aspect-[4/5] items-end rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-[#2d271f] via-[#16120e] to-black p-8">
-              <span className="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-xs uppercase tracking-[0.25em] text-[#d6b46a]">
-                Primary
-              </span>
+      <section className="px-6 py-28 pt-32">
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="space-y-5">
+            <Link
+              href="/products"
+              className="inline-flex text-sm uppercase tracking-[0.25em] text-[#6b6b6b] transition hover:text-[#b3132b]"
+            >
+              ← Back to catalogue
+            </Link>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              <div className="flex aspect-[4/5] items-end rounded-[2.5rem] border border-[#e9d8dc] bg-[linear-gradient(145deg,_#ffffff,_#fcebed_55%,_#fff7f8)] p-8">
+                <span className="rounded-full border border-[#e9d8dc] bg-white px-4 py-2 text-xs uppercase tracking-[0.25em] text-[#b3132b]">
+                  Primary
+                </span>
+              </div>
+
+              <div className="flex aspect-[4/5] items-end rounded-[2.5rem] border border-[#e9d8dc] bg-[linear-gradient(145deg,_#ffffff,_#f8eef0_55%,_#fff7f8)] p-8">
+                <span className="rounded-full border border-[#e9d8dc] bg-white px-4 py-2 text-xs uppercase tracking-[0.25em] text-[#b3132b]">
+                  Detail
+                </span>
+              </div>
             </div>
 
-            <div className="flex aspect-[4/5] items-end rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-[#342b20] via-[#19140f] to-black p-8">
-              <span className="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-xs uppercase tracking-[0.25em] text-[#d6b46a]">
-                Detail
-              </span>
-            </div>
-          </div>
-
-          {product.has360Viewer ? (
-            <div className="rounded-[2rem] border border-[#d6b46a]/30 bg-[#d6b46a]/10 p-6">
-              <p className="text-sm uppercase tracking-[0.25em] text-[#d6b46a]">
-                360° experience ready
-              </p>
-              <p className="mt-3 text-sm leading-6 text-white/55">
-                In the advanced phase, this area will load the 360° viewer dynamically so the heavy
-                3D bundle never affects the initial page load.
-              </p>
-            </div>
-          ) : null}
-        </div>
-
-        <aside className="lg:sticky lg:top-28 lg:self-start">
-          <p className="text-sm uppercase tracking-[0.35em] text-[#d6b46a]">{product.brand}</p>
-
-          <h1 className="mt-5 text-5xl font-light leading-tight tracking-[-0.04em] text-white md:text-7xl">
-            {product.name}
-          </h1>
-
-          <p className="mt-5 text-lg leading-8 text-white/60">{product.shortDescription}</p>
-
-          <div className="mt-8 flex items-end gap-4">
-            <p className="text-3xl font-light text-white">
-              {formatPrice(product.price, product.currency)}
-            </p>
-
-            {product.comparePrice ? (
-              <p className="text-lg text-white/35 line-through">
-                {formatPrice(product.comparePrice, product.currency)}
-              </p>
+            {product.has360Viewer ? (
+              <div className="rounded-[2rem] border border-[#e9d8dc] bg-[#fcebed] p-6">
+                <p className="text-sm uppercase tracking-[0.25em] text-[#b3132b]">
+                  360° experience ready
+                </p>
+                <p className="mt-3 text-sm leading-6 text-[#6b6b6b]">
+                  In the advanced phase, this area will load the 360° viewer dynamically so the
+                  heavy 3D bundle never affects the initial page load.
+                </p>
+              </div>
             ) : null}
           </div>
 
-          <div className="mt-8 rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
-            <p className="text-sm uppercase tracking-[0.25em] text-white/40">Availability</p>
-            <p className="mt-2 text-white/70">
-              {product.stock > 0 ? `${product.stock} pieces available` : "Sold out"}
-            </p>
-          </div>
+          <aside className="lg:sticky lg:top-28 lg:self-start">
+            <p className="text-sm uppercase tracking-[0.35em] text-[#b3132b]">{product.brand}</p>
 
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <AddToCartButton product={product} />
+            <h1 className="mt-5 text-5xl font-light leading-tight tracking-[-0.04em] text-[#181818] md:text-7xl">
+              {product.name}
+            </h1>
 
-            <button className="rounded-full border border-white/20 px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-[#d6b46a] hover:text-[#d6b46a]">
-              Add to Wishlist
-            </button>
-          </div>
+            <p className="mt-5 text-lg leading-8 text-[#6b6b6b]">{product.shortDescription}</p>
 
-          <div className="mt-10 border-t border-white/10 pt-8">
-            <h2 className="text-xl font-light text-white">Description</h2>
-            <p className="mt-4 text-sm leading-7 text-white/55">{product.description}</p>
-          </div>
+            <div className="mt-8 flex items-end gap-4">
+              <p className="text-3xl font-light text-[#181818]">
+                {formatPrice(product.price, product.currency)}
+              </p>
 
-          <div className="mt-8 grid gap-6 border-t border-white/10 pt-8 md:grid-cols-2">
-            <div>
-              <h3 className="text-sm uppercase tracking-[0.25em] text-[#d6b46a]">Materials</h3>
-              <ul className="mt-4 space-y-2 text-sm text-white/55">
-                {product.materials.map((item) => (
-                  <li key={item}>• {item}</li>
-                ))}
-              </ul>
+              {product.comparePrice ? (
+                <p className="text-lg text-[#6b6b6b] line-through">
+                  {formatPrice(product.comparePrice, product.currency)}
+                </p>
+              ) : null}
             </div>
 
-            <div>
-              <h3 className="text-sm uppercase tracking-[0.25em] text-[#d6b46a]">Features</h3>
-              <ul className="mt-4 space-y-2 text-sm text-white/55">
-                {product.features.map((item) => (
-                  <li key={item}>• {item}</li>
-                ))}
-              </ul>
+            <div className="mt-8 rounded-[2rem] border border-[#e9d8dc] bg-[#faf7f8] p-6">
+              <p className="text-sm uppercase tracking-[0.25em] text-[#6b6b6b]">Availability</p>
+              <p className="mt-2 text-[#181818]">
+                {product.stock > 0 ? `${product.stock} pieces available` : "Sold out"}
+              </p>
             </div>
-          </div>
-        </aside>
+
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <AddToCartButton product={product} />
+
+              <button className="rounded-full border border-[#e9d8dc] bg-white px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#181818] transition hover:border-[#b3132b] hover:text-[#b3132b]">
+                Add to Wishlist
+              </button>
+            </div>
+
+            <div className="mt-10 border-t border-[#e9d8dc] pt-8">
+              <h2 className="text-xl font-light text-[#181818]">Description</h2>
+              <p className="mt-4 text-sm leading-7 text-[#6b6b6b]">{product.description}</p>
+            </div>
+
+            <div className="mt-8 grid gap-6 border-t border-[#e9d8dc] pt-8 md:grid-cols-2">
+              <div>
+                <h3 className="text-sm uppercase tracking-[0.25em] text-[#b3132b]">Materials</h3>
+                <ul className="mt-4 space-y-2 text-sm text-[#6b6b6b]">
+                  {product.materials.map((item) => (
+                    <li key={item}>• {item}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-sm uppercase tracking-[0.25em] text-[#b3132b]">Features</h3>
+                <ul className="mt-4 space-y-2 text-sm text-[#6b6b6b]">
+                  {product.features.map((item) => (
+                    <li key={item}>• {item}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </aside>
+        </div>
       </section>
+
+      <Footer />
     </main>
   );
 }

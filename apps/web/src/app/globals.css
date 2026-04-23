@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0d0b08;
-  --foreground: #f8f2e8;
+  --background: #ffffff;
+  --foreground: #181818;
+  --surface: #faf7f8;
+  --surface-strong: #fcebed;
+  --primary: #b3132b;
+  --primary-dark: #8e1023;
+  --border: #e9d8dc;
+  --muted: #6b6b6b;
 }
 
 * {
@@ -23,27 +29,27 @@ a {
   text-decoration: none;
 }
 
-
 .field-input {
   width: 100%;
   border-radius: 1rem;
-  border: 1px solid rgb(255 255 255 / 0.1);
-  background: rgb(0 0 0 / 0.2);
+  border: 1px solid var(--border);
+  background: white;
   padding: 1rem 1.25rem;
-  color: white;
+  color: var(--foreground);
   outline: none;
-  transition: border-color 150ms ease;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
 .field-input:focus {
-  border-color: #d6b46a;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(179, 19, 43, 0.08);
 }
 
 .field-input::placeholder {
-  color: rgb(255 255 255 / 0.25);
+  color: rgba(24, 24, 24, 0.35);
 }
 
 .field-input option {
-  background: #0d0b08;
-  color: white;
+  background: white;
+  color: var(--foreground);
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { auth, signOut } from "@/auth";
 
 type AdminShellProps = {
   title: string;
@@ -8,7 +9,9 @@ type AdminShellProps = {
   children: ReactNode;
 };
 
-export function AdminShell({ title, eyebrow, description, children }: AdminShellProps) {
+export async function AdminShell({ title, eyebrow, description, children }: AdminShellProps) {
+  const session = await auth();
+
   return (
     <main className="min-h-screen bg-[#0d0b08] px-6 py-28 text-[#f8f2e8]">
       <section className="mx-auto max-w-7xl">
@@ -25,11 +28,33 @@ export function AdminShell({ title, eyebrow, description, children }: AdminShell
             ) : null}
           </div>
 
-          <nav className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.22em] text-white/60">
-            <AdminNavLink href="/admin">Overview</AdminNavLink>
-            <AdminNavLink href="/admin/products">Products</AdminNavLink>
-            <AdminNavLink href="/admin/orders">Orders</AdminNavLink>
-          </nav>
+          <div className="flex flex-col items-start gap-4 md:items-end">
+            <nav className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.22em] text-white/60">
+              <AdminNavLink href="/admin">Overview</AdminNavLink>
+              <AdminNavLink href="/admin/products">Products</AdminNavLink>
+              <AdminNavLink href="/admin/orders">Orders</AdminNavLink>
+            </nav>
+
+            <div className="flex items-center gap-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-white/35">
+                {session?.user?.email}
+              </p>
+
+              <form
+                action={async () => {
+                  "use server";
+                  await signOut({ redirectTo: "/login" });
+                }}
+              >
+                <button
+                  type="submit"
+                  className="rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/60 transition hover:border-[#d6b46a] hover:text-[#d6b46a]"
+                >
+                  Sign Out
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
 
         {children}

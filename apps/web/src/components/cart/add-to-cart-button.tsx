@@ -25,7 +25,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
     <button
       onClick={handleAddToCart}
       disabled={product.stock <= 0}
-      className="rounded-full bg-[#d6b46a] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-black transition hover:bg-[#f0cf82] disabled:cursor-not-allowed disabled:opacity-50"
+      className="rounded-full bg-[#b3132b] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#8e1023] disabled:cursor-not-allowed disabled:opacity-50"
     >
       {product.stock <= 0 ? "Sold Out" : added ? "Added" : "Add to Cart"}
     </button>
