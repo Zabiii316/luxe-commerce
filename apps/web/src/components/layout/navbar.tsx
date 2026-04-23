@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CartLink } from "@/components/cart/cart-link";
+import { WishlistLink } from "@/components/wishlist/wishlist-link";
 
 export function Navbar() {
   return (
@@ -28,6 +29,7 @@ export function Navbar() {
           <Link href="/products" className="hidden transition hover:text-[#b3132b] sm:block">
             Search
           </Link>
+          <WishlistLink />
           <CartLink />
         </div>
       </div>

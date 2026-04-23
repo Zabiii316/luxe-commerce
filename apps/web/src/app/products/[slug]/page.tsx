@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
+import { AddToWishlistButton } from "@/components/wishlist/add-to-wishlist-button";
 import { getProductBySlug, getProducts } from "@/lib/data/products";
 import { formatPrice } from "@/lib/utils/money";
 
@@ -142,10 +143,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <AddToCartButton product={product} />
-
-              <button className="rounded-full border border-[#e9d8dc] bg-white px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#181818] transition hover:border-[#b3132b] hover:text-[#b3132b]">
-                Add to Wishlist
-              </button>
+              <AddToWishlistButton product={product} />
             </div>
 
             <div className="mt-10 border-t border-[#e9d8dc] pt-8">
