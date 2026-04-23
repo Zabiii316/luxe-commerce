@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type ProductOption = {
   id: string;
@@ -99,13 +99,57 @@ export function AdminProductForm({
   const [stock, setStock] = useState(String(startingValues.stock));
   const [status, setStatus] = useState(startingValues.status);
   const [message, setMessage] = useState("");
+  const [uploadMessage, setUploadMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const imageList = useMemo(() => linesToArray(images), [images]);
 
   function handleNameChange(value: string) {
     setName(value);
 
     if (mode === "create" && !slug) {
       setSlug(slugify(value));
+    }
+  }
+
+  async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const files = event.target.files;
+
+    if (!files?.length) {
+      return;
+    }
+
+    setUploadMessage("");
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+
+      Array.from(files).forEach((file) => {
+        formData.append("files", file);
+      });
+
+      const response = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok || !Array.isArray(data.files)) {
+        setUploadMessage(data.message || "Upload failed.");
+        return;
+      }
+
+      const nextImages = [...imageList, ...data.files];
+      setImages(arrayToLines(nextImages));
+      setUploadMessage("Images uploaded successfully.");
+      event.target.value = "";
+    } catch {
+      setUploadMessage("Upload failed. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   }
 
@@ -324,6 +368,63 @@ export function AdminProductForm({
       </FormSection>
 
       <FormSection
+        eyebrow="Media"
+        title="Upload and preview product imagery."
+        description="Upload JPG, PNG, or WEBP files. Uploaded paths are added automatically to the product image list."
+      >
+        <div className="grid gap-5">
+          <div className="rounded-[1.5rem] border border-[#e9d8dc] bg-[#faf7f8] p-5">
+            <label className="block">
+              <span className="text-xs uppercase tracking-[0.22em] text-[#6b6b6b]">Upload images</span>
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                multiple
+                onChange={handleImageUpload}
+                className="mt-3 block w-full text-sm text-[#181818]"
+              />
+            </label>
+
+            <p className="mt-3 text-sm text-[#6b6b6b]">
+              Max 5MB per file. Uploads are stored locally in <code>/public/uploads/products</code>.
+            </p>
+
+            {uploadMessage ? (
+              <div className="mt-4 rounded-2xl border border-[#e9d8dc] bg-white p-4 text-sm text-[#181818]">
+                {uploadMessage}
+              </div>
+            ) : null}
+
+            {isUploading ? (
+              <p className="mt-4 text-sm text-[#b3132b]">Uploading images...</p>
+            ) : null}
+          </div>
+
+          {imageList.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {imageList.map((image) => (
+                <div
+                  key={image}
+                  className="overflow-hidden rounded-[1.5rem] border border-[#e9d8dc] bg-white"
+                >
+                  <div className="aspect-square bg-[#faf7f8]">
+                    <img
+                      src={image}
+                      alt="Product preview"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="border-t border-[#e9d8dc] p-3">
+                    <p className="truncate text-xs text-[#6b6b6b]">{image}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </FormSection>
+
+      <FormSection
         eyebrow="Structured Content"
         title="Materials, features, and imagery."
         description="Enter one value per line so the product detail page stays clean and structured."
@@ -350,7 +451,7 @@ export function AdminProductForm({
               value={images}
               onChange={(event) => setImages(event.target.value)}
               className="field-input min-h-36"
-              placeholder="/products/example-1.jpg"
+              placeholder="/uploads/products/example.jpg"
             />
           </Field>
         </div>

@@ -34,6 +34,8 @@ export async function AdminShell({ title, eyebrow, description, children }: Admi
                 <AdminNavLink href="/admin">Overview</AdminNavLink>
                 <AdminNavLink href="/admin/products">Products</AdminNavLink>
                 <AdminNavLink href="/admin/orders">Orders</AdminNavLink>
+                <AdminNavLink href="/admin/brands">Brands</AdminNavLink>
+                <AdminNavLink href="/admin/categories">Categories</AdminNavLink>
               </nav>
 
               <div className="flex items-center gap-4">

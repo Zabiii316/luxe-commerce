@@ -44,6 +44,9 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     notFound();
   }
 
+  const primaryImage = product.images[0];
+  const secondaryImage = product.images[1] || product.images[0];
+
   return (
     <main className="min-h-screen bg-white text-[#181818]">
       <Navbar />
@@ -59,16 +62,40 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </Link>
 
             <div className="grid gap-5 md:grid-cols-2">
-              <div className="flex aspect-[4/5] items-end rounded-[2.5rem] border border-[#e9d8dc] bg-[linear-gradient(145deg,_#ffffff,_#fcebed_55%,_#fff7f8)] p-8">
-                <span className="rounded-full border border-[#e9d8dc] bg-white px-4 py-2 text-xs uppercase tracking-[0.25em] text-[#b3132b]">
-                  Primary
-                </span>
+              <div className="relative overflow-hidden rounded-[2.5rem] border border-[#e9d8dc] bg-[linear-gradient(145deg,_#ffffff,_#fcebed_55%,_#fff7f8)]">
+                <div className="aspect-[4/5]">
+                  {primaryImage ? (
+                    <img
+                      src={primaryImage}
+                      alt={product.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full items-end p-8">
+                      <span className="rounded-full border border-[#e9d8dc] bg-white px-4 py-2 text-xs uppercase tracking-[0.25em] text-[#b3132b]">
+                        Primary
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div className="flex aspect-[4/5] items-end rounded-[2.5rem] border border-[#e9d8dc] bg-[linear-gradient(145deg,_#ffffff,_#f8eef0_55%,_#fff7f8)] p-8">
-                <span className="rounded-full border border-[#e9d8dc] bg-white px-4 py-2 text-xs uppercase tracking-[0.25em] text-[#b3132b]">
-                  Detail
-                </span>
+              <div className="relative overflow-hidden rounded-[2.5rem] border border-[#e9d8dc] bg-[linear-gradient(145deg,_#ffffff,_#f8eef0_55%,_#fff7f8)]">
+                <div className="aspect-[4/5]">
+                  {secondaryImage ? (
+                    <img
+                      src={secondaryImage}
+                      alt={`${product.name} alternate`}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full items-end p-8">
+                      <span className="rounded-full border border-[#e9d8dc] bg-white px-4 py-2 text-xs uppercase tracking-[0.25em] text-[#b3132b]">
+                        Detail
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 

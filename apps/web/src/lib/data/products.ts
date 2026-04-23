@@ -10,6 +10,15 @@ const productWithRelations = Prisma.validator<Prisma.ProductDefaultArgs>()({
 
 type ProductWithRelations = Prisma.ProductGetPayload<typeof productWithRelations>;
 
+export type ProductCatalogFilters = {
+  q?: string;
+  brand?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: "newest" | "price-asc" | "price-desc";
+};
+
 function toCategoryName(categoryName: string): Product["category"] {
   const allowedCategories: Product["category"][] = [
     "Luxury Fashion",
@@ -44,21 +53,81 @@ function mapDatabaseProduct(product: ProductWithRelations): Product {
   };
 }
 
-export async function getProducts() {
+function buildOrderBy(
+  sort?: ProductCatalogFilters["sort"],
+): Prisma.ProductOrderByWithRelationInput {
+  if (sort === "price-asc") {
+    return { basePrice: "asc" };
+  }
+
+  if (sort === "price-desc") {
+    return { basePrice: "desc" };
+  }
+
+  return { createdAt: "desc" };
+}
+
+export async function getProducts(filters: ProductCatalogFilters = {}) {
   const products = await prisma.product.findMany({
     where: {
       status: "ACTIVE",
+      ...(filters.q
+        ? {
+            OR: [
+              { name: { contains: filters.q, mode: "insensitive" } },
+              { shortDescription: { contains: filters.q, mode: "insensitive" } },
+              { description: { contains: filters.q, mode: "insensitive" } },
+              { brand: { name: { contains: filters.q, mode: "insensitive" } } },
+              { category: { name: { contains: filters.q, mode: "insensitive" } } },
+            ],
+          }
+        : {}),
+      ...(filters.brand
+        ? {
+            brand: {
+              slug: filters.brand,
+            },
+          }
+        : {}),
+      ...(filters.category
+        ? {
+            category: {
+              slug: filters.category,
+            },
+          }
+        : {}),
+      ...(filters.minPrice !== undefined || filters.maxPrice !== undefined
+        ? {
+            basePrice: {
+              ...(filters.minPrice !== undefined ? { gte: filters.minPrice } : {}),
+              ...(filters.maxPrice !== undefined ? { lte: filters.maxPrice } : {}),
+            },
+          }
+        : {}),
     },
     include: {
       brand: true,
       category: true,
     },
-    orderBy: {
-      createdAt: "asc",
-    },
+    orderBy: buildOrderBy(filters.sort),
   });
 
   return products.map(mapDatabaseProduct);
+}
+
+export async function getProductFilterOptions() {
+  const [brands, categories] = await Promise.all([
+    prisma.brand.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, slug: true },
+    }),
+    prisma.category.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, slug: true },
+    }),
+  ]);
+
+  return { brands, categories };
 }
 
 export async function getFeaturedProducts(limit = 3) {
