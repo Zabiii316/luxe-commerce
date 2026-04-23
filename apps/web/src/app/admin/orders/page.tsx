@@ -26,10 +26,10 @@ export default async function AdminOrdersPage() {
       title="Orders."
       description="Review customer orders, payment status, order totals, item counts, and payment references."
     >
-      <div className="overflow-x-auto rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
+      <div className="overflow-x-auto rounded-[2rem] border border-[#e9d8dc] bg-white p-6 shadow-[0_14px_36px_rgba(179,19,43,0.05)]">
         <table className="w-full min-w-[980px] border-collapse text-left">
           <thead>
-            <tr className="border-b border-white/10 text-xs uppercase tracking-[0.2em] text-white/35">
+            <tr className="border-b border-[#e9d8dc] text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">
               <th className="py-4 pr-4 font-normal">Order</th>
               <th className="py-4 pr-4 font-normal">Customer</th>
               <th className="py-4 pr-4 font-normal">Status</th>
@@ -42,16 +42,16 @@ export default async function AdminOrdersPage() {
 
           <tbody>
             {orders.map((order) => (
-              <tr key={order.id} className="border-b border-white/10 text-sm text-white/65">
+              <tr key={order.id} className="border-b border-[#f3e5e8] text-sm text-[#6b6b6b]">
                 <td className="py-4 pr-4">
-                  <p className="max-w-[240px] truncate text-white">{order.id}</p>
-                  <p className="mt-1 max-w-[240px] truncate text-xs text-white/35">
+                  <p className="max-w-[240px] truncate text-[#181818]">{order.id}</p>
+                  <p className="mt-1 max-w-[240px] truncate text-xs text-[#6b6b6b]">
                     {order.paymentRef || "No payment ref"}
                   </p>
                 </td>
                 <td className="py-4 pr-4">
                   <p>{order.customer.firstName} {order.customer.lastName}</p>
-                  <p className="mt-1 text-xs text-white/35">{order.customer.email}</p>
+                  <p className="mt-1 text-xs text-[#6b6b6b]">{order.customer.email}</p>
                 </td>
                 <td className="py-4 pr-4"><StatusBadge status={order.status} /></td>
                 <td className="py-4 pr-4">{order.items.length}</td>
@@ -60,7 +60,7 @@ export default async function AdminOrdersPage() {
                 <td className="py-4 pr-4">
                   <Link
                     href={`/admin/orders/${order.id}`}
-                    className="text-xs uppercase tracking-[0.2em] text-[#d6b46a] transition hover:text-[#f0cf82]"
+                    className="text-xs uppercase tracking-[0.2em] text-[#b3132b] transition hover:text-[#8e1023]"
                   >
                     Open
                   </Link>

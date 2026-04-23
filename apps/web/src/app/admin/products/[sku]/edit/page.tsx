@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@luxe/database";
 import { AdminShell } from "@/app/admin/_components/admin-shell";
@@ -54,8 +55,24 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
     <AdminShell
       eyebrow="Product Operations"
       title="Edit product."
-      description="Update pricing, stock, status, and editorial product details."
+      description="Update pricing, stock, taxonomy, product status, and premium storefront content."
     >
+      <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <Link
+          href="/admin/products"
+          className="text-sm uppercase tracking-[0.25em] text-[#6b6b6b] transition hover:text-[#b3132b]"
+        >
+          ← Back to products
+        </Link>
+
+        <Link
+          href={`/products/${product.slug}`}
+          className="text-sm uppercase tracking-[0.25em] text-[#b3132b] transition hover:text-[#8e1023]"
+        >
+          View storefront page
+        </Link>
+      </div>
+
       <AdminProductForm
         mode="edit"
         brands={brands}

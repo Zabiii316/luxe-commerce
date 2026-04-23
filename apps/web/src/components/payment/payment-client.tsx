@@ -95,12 +95,12 @@ export function PaymentClient() {
         ? {
             clientSecret: status.clientSecret,
             appearance: {
-              theme: "night" as const,
+              theme: "stripe" as const,
               variables: {
-                colorPrimary: "#d6b46a",
-                colorBackground: "#0d0b08",
-                colorText: "#f8f2e8",
-                colorDanger: "#ff8a8a",
+                colorPrimary: "#b3132b",
+                colorBackground: "#ffffff",
+                colorText: "#181818",
+                colorDanger: "#b3132b",
                 borderRadius: "16px",
               },
             },
@@ -112,8 +112,8 @@ export function PaymentClient() {
   if (status.type === "loading") {
     return (
       <PaymentShell title="Preparing payment" message={status.message}>
-        <div className="h-2 overflow-hidden rounded-full bg-white/10">
-          <div className="h-full w-1/2 animate-pulse rounded-full bg-[#d6b46a]" />
+        <div className="h-2 overflow-hidden rounded-full bg-[#fcebed]">
+          <div className="h-full w-1/2 animate-pulse rounded-full bg-[#b3132b]" />
         </div>
       </PaymentShell>
     );
@@ -124,7 +124,7 @@ export function PaymentClient() {
       <PaymentShell title="Payment setup issue" message={status.message}>
         <Link
           href="/checkout"
-          className="mt-8 inline-flex rounded-full bg-[#d6b46a] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-black transition hover:bg-[#f0cf82]"
+          className="mt-8 inline-flex rounded-full bg-[#b3132b] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#8e1023]"
         >
           Back to Checkout
         </Link>
@@ -180,7 +180,7 @@ function StripePaymentForm({ orderId }: { orderId: string }) {
       <PaymentElement />
 
       {errorMessage ? (
-        <div className="rounded-2xl border border-red-400/30 bg-red-400/10 p-5 text-sm text-red-200">
+        <div className="rounded-2xl border border-red-300/40 bg-red-50 p-5 text-sm text-[#8e1023]">
           {errorMessage}
         </div>
       ) : null}
@@ -188,7 +188,7 @@ function StripePaymentForm({ orderId }: { orderId: string }) {
       <button
         type="submit"
         disabled={!stripe || !elements || isSubmitting}
-        className="w-full rounded-full bg-[#d6b46a] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-black transition hover:bg-[#f0cf82] disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-full bg-[#b3132b] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#8e1023] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting ? "Processing Payment..." : "Pay Securely"}
       </button>
@@ -206,14 +206,14 @@ function PaymentShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto max-w-3xl rounded-[2.5rem] border border-white/10 bg-white/[0.03] p-8 md:p-12">
-      <p className="text-sm uppercase tracking-[0.35em] text-[#d6b46a]">Stripe Checkout</p>
+    <div className="mx-auto max-w-3xl rounded-[2.5rem] border border-[#e9d8dc] bg-white p-8 shadow-[0_18px_50px_rgba(179,19,43,0.06)] md:p-12">
+      <p className="text-sm uppercase tracking-[0.35em] text-[#b3132b]">Stripe Checkout</p>
 
-      <h1 className="mt-5 text-5xl font-light leading-tight tracking-[-0.04em] text-white md:text-7xl">
+      <h1 className="mt-5 text-5xl font-light leading-tight tracking-[-0.04em] text-[#181818] md:text-7xl">
         {title}.
       </h1>
 
-      <p className="mt-6 text-lg leading-8 text-white/60">{message}</p>
+      <p className="mt-6 text-lg leading-8 text-[#6b6b6b]">{message}</p>
 
       {children}
     </div>

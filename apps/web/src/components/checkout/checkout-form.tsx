@@ -92,16 +92,16 @@ export function CheckoutForm() {
 
   if (items.length === 0) {
     return (
-      <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-10">
-        <h1 className="text-4xl font-light text-white">Your cart is empty.</h1>
+      <div className="rounded-[2rem] border border-[#e9d8dc] bg-[#faf7f8] p-10">
+        <h1 className="text-4xl font-light text-[#181818]">Your cart is empty.</h1>
 
-        <p className="mt-4 max-w-xl text-sm leading-7 text-white/55">
+        <p className="mt-4 max-w-xl text-sm leading-7 text-[#6b6b6b]">
           Add products to your private selection before continuing to checkout.
         </p>
 
         <Link
           href="/products"
-          className="mt-8 inline-flex rounded-full bg-[#d6b46a] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-black transition hover:bg-[#f0cf82]"
+          className="mt-8 inline-flex rounded-full bg-[#b3132b] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#8e1023]"
         >
           Explore Products
         </Link>
@@ -113,11 +113,11 @@ export function CheckoutForm() {
     <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 md:p-8"
+        className="rounded-[2rem] border border-[#e9d8dc] bg-white p-6 shadow-[0_18px_50px_rgba(179,19,43,0.06)] md:p-8"
       >
-        <p className="text-sm uppercase tracking-[0.35em] text-[#d6b46a]">Secure Checkout</p>
+        <p className="text-sm uppercase tracking-[0.35em] text-[#b3132b]">Secure Checkout</p>
 
-        <h1 className="mt-5 text-5xl font-light tracking-[-0.04em] text-white md:text-6xl">
+        <h1 className="mt-5 text-5xl font-light tracking-[-0.04em] text-[#181818] md:text-6xl">
           Complete your details.
         </h1>
 
@@ -165,7 +165,7 @@ export function CheckoutForm() {
         </div>
 
         {status.type !== "idle" ? (
-          <div className="mt-8 rounded-2xl border border-red-400/30 bg-red-400/10 p-5 text-sm leading-6 text-red-200">
+          <div className="mt-8 rounded-2xl border border-red-300/40 bg-red-50 p-5 text-sm leading-6 text-[#8e1023]">
             {status.message}
           </div>
         ) : null}
@@ -173,27 +173,27 @@ export function CheckoutForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="mt-8 w-full rounded-full bg-[#d6b46a] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-black transition hover:bg-[#f0cf82] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-8 w-full rounded-full bg-[#b3132b] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#8e1023] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? "Creating Secure Order..." : "Place Secure Order"}
         </button>
       </form>
 
-      <aside className="h-fit rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 lg:sticky lg:top-28">
-        <p className="text-sm uppercase tracking-[0.3em] text-[#d6b46a]">Order Summary</p>
+      <aside className="h-fit rounded-[2rem] border border-[#e9d8dc] bg-[#faf7f8] p-6 lg:sticky lg:top-28">
+        <p className="text-sm uppercase tracking-[0.3em] text-[#b3132b]">Order Summary</p>
 
         <div className="mt-8 space-y-5">
           {items.map((item) => (
-            <div key={item.sku} className="border-b border-white/10 pb-5">
+            <div key={item.sku} className="border-b border-[#e9d8dc] pb-5">
               <div className="flex justify-between gap-4">
                 <div>
-                  <p className="text-white">{item.name}</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.2em] text-white/35">
+                  <p className="text-[#181818]">{item.name}</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">
                     Qty {item.quantity}
                   </p>
                 </div>
 
-                <p className="text-white/70">
+                <p className="text-[#181818]">
                   {formatPrice(item.price * item.quantity, item.currency)}
                 </p>
               </div>
@@ -201,12 +201,12 @@ export function CheckoutForm() {
           ))}
         </div>
 
-        <div className="mt-6 flex justify-between text-xl text-white">
+        <div className="mt-6 flex justify-between text-xl text-[#181818]">
           <span>Total</span>
           <span>{formatPrice(subtotal)}</span>
         </div>
 
-        <p className="mt-6 text-xs leading-6 text-white/40">
+        <p className="mt-6 text-xs leading-6 text-[#6b6b6b]">
           The browser subtotal is submitted only for comparison. The server recomputes the
           authoritative total before creating the order.
         </p>
@@ -225,14 +225,14 @@ type FieldProps = {
 function Field({ label, error, className = "", inputProps }: FieldProps) {
   return (
     <label className={className}>
-      <span className="text-xs uppercase tracking-[0.22em] text-white/45">{label}</span>
+      <span className="text-xs uppercase tracking-[0.22em] text-[#6b6b6b]">{label}</span>
 
       <input
         {...inputProps}
-        className="mt-3 w-full rounded-2xl border border-white/10 bg-black/20 px-5 py-4 text-white outline-none transition placeholder:text-white/25 focus:border-[#d6b46a]"
+        className="field-input mt-3"
       />
 
-      {error ? <span className="mt-2 block text-sm text-red-300">{error}</span> : null}
+      {error ? <span className="mt-2 block text-sm text-[#b3132b]">{error}</span> : null}
     </label>
   );
 }

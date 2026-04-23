@@ -28,16 +28,16 @@ export default async function AdminProductsPage() {
       <div className="mb-6 flex justify-end">
         <Link
           href="/admin/products/new"
-          className="rounded-full bg-[#d6b46a] px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-black transition hover:bg-[#f0cf82]"
+          className="rounded-full bg-[#b3132b] px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#8e1023]"
         >
           New Product
         </Link>
       </div>
 
-      <div className="overflow-x-auto rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
+      <div className="overflow-x-auto rounded-[2rem] border border-[#e9d8dc] bg-white p-6 shadow-[0_14px_36px_rgba(179,19,43,0.05)]">
         <table className="w-full min-w-[980px] border-collapse text-left">
           <thead>
-            <tr className="border-b border-white/10 text-xs uppercase tracking-[0.2em] text-white/35">
+            <tr className="border-b border-[#e9d8dc] text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">
               <th className="py-4 pr-4 font-normal">Product</th>
               <th className="py-4 pr-4 font-normal">Brand</th>
               <th className="py-4 pr-4 font-normal">Category</th>
@@ -50,10 +50,10 @@ export default async function AdminProductsPage() {
 
           <tbody>
             {products.map((product) => (
-              <tr key={product.sku} className="border-b border-white/10 text-sm text-white/65">
+              <tr key={product.sku} className="border-b border-[#f3e5e8] text-sm text-[#6b6b6b]">
                 <td className="py-4 pr-4">
-                  <p className="text-white">{product.name}</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/35">
+                  <p className="text-[#181818]">{product.name}</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-[#6b6b6b]">
                     {product.sku}
                   </p>
                 </td>
@@ -68,14 +68,14 @@ export default async function AdminProductsPage() {
                   <div className="flex gap-4">
                     <Link
                       href={`/products/${product.slug}`}
-                      className="text-xs uppercase tracking-[0.2em] text-white/45 transition hover:text-[#d6b46a]"
+                      className="text-xs uppercase tracking-[0.2em] text-[#6b6b6b] transition hover:text-[#b3132b]"
                     >
                       View
                     </Link>
 
                     <Link
                       href={`/admin/products/${product.sku}/edit`}
-                      className="text-xs uppercase tracking-[0.2em] text-[#d6b46a] transition hover:text-[#f0cf82]"
+                      className="text-xs uppercase tracking-[0.2em] text-[#b3132b] transition hover:text-[#8e1023]"
                     >
                       Edit
                     </Link>

@@ -50,16 +50,16 @@ export default async function AdminPage() {
         <MetricCard label="Paid Revenue" value={formatPrice(paidRevenue)} helper="Revenue from PAID orders only." />
       </div>
 
-      <div className="mt-10 rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
+      <div className="mt-10 rounded-[2rem] border border-[#e9d8dc] bg-white p-6 shadow-[0_14px_36px_rgba(179,19,43,0.05)]">
         <div className="mb-6 flex items-center justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.25em] text-[#d6b46a]">Recent Orders</p>
-            <h2 className="mt-2 text-3xl font-light text-white">Latest activity</h2>
+            <p className="text-xs uppercase tracking-[0.25em] text-[#b3132b]">Recent Orders</p>
+            <h2 className="mt-2 text-3xl font-light text-[#181818]">Latest activity</h2>
           </div>
 
           <Link
             href="/admin/orders"
-            className="text-xs uppercase tracking-[0.22em] text-white/45 transition hover:text-[#d6b46a]"
+            className="text-xs uppercase tracking-[0.22em] text-[#6b6b6b] transition hover:text-[#b3132b]"
           >
             View all
           </Link>
@@ -68,7 +68,7 @@ export default async function AdminPage() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] border-collapse text-left">
             <thead>
-              <tr className="border-b border-white/10 text-xs uppercase tracking-[0.2em] text-white/35">
+              <tr className="border-b border-[#e9d8dc] text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">
                 <th className="py-4 pr-4 font-normal">Order</th>
                 <th className="py-4 pr-4 font-normal">Customer</th>
                 <th className="py-4 pr-4 font-normal">Status</th>
@@ -79,9 +79,9 @@ export default async function AdminPage() {
 
             <tbody>
               {recentOrders.map((order) => (
-                <tr key={order.id} className="border-b border-white/10 text-sm text-white/65">
+                <tr key={order.id} className="border-b border-[#f3e5e8] text-sm text-[#6b6b6b]">
                   <td className="py-4 pr-4">
-                    <Link href={`/admin/orders/${order.id}`} className="text-white transition hover:text-[#d6b46a]">
+                    <Link href={`/admin/orders/${order.id}`} className="text-[#181818] transition hover:text-[#b3132b]">
                       {order.id}
                     </Link>
                   </td>

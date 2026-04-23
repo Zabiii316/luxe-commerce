@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@luxe/database";
 import { AdminShell } from "@/app/admin/_components/admin-shell";
 import { AdminProductForm } from "@/components/admin/admin-product-form";
@@ -33,8 +34,17 @@ export default async function NewProductPage() {
     <AdminShell
       eyebrow="Product Operations"
       title="Create product."
-      description="Add a new luxury product to the PostgreSQL catalogue."
+      description="Add a new luxury product to the PostgreSQL catalogue with clean taxonomy, pricing, stock, and editorial content."
     >
+      <div className="mb-8">
+        <Link
+          href="/admin/products"
+          className="text-sm uppercase tracking-[0.25em] text-[#6b6b6b] transition hover:text-[#b3132b]"
+        >
+          ← Back to products
+        </Link>
+      </div>
+
       <AdminProductForm mode="create" brands={brands} categories={categories} />
     </AdminShell>
   );

@@ -1,4 +1,6 @@
 import { CheckoutForm } from "@/components/checkout/checkout-form";
+import { Footer } from "@/components/layout/footer";
+import { Navbar } from "@/components/layout/navbar";
 
 export const metadata = {
   title: "Checkout | LuxeCommerce",
@@ -7,10 +9,16 @@ export const metadata = {
 
 export default function CheckoutPage() {
   return (
-    <main className="min-h-screen bg-[#0d0b08] px-6 py-28 text-[#f8f2e8]">
-      <section className="mx-auto max-w-7xl">
-        <CheckoutForm />
+    <main className="min-h-screen bg-white text-[#181818]">
+      <Navbar />
+
+      <section className="px-6 py-28 pt-32">
+        <div className="mx-auto max-w-7xl">
+          <CheckoutForm />
+        </div>
       </section>
+
+      <Footer />
     </main>
   );
 }

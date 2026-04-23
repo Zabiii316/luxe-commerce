@@ -52,7 +52,7 @@ export default async function AdminOrderDetailsPage({ params }: OrderDetailsPage
       <div className="mb-8">
         <Link
           href="/admin/orders"
-          className="text-sm uppercase tracking-[0.25em] text-white/45 transition hover:text-[#d6b46a]"
+          className="text-sm uppercase tracking-[0.25em] text-[#6b6b6b] transition hover:text-[#b3132b]"
         >
           ← Back to orders
         </Link>
@@ -60,11 +60,11 @@ export default async function AdminOrderDetailsPage({ params }: OrderDetailsPage
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
+          <div className="rounded-[2rem] border border-[#e9d8dc] bg-white p-6 shadow-[0_14px_36px_rgba(179,19,43,0.05)]">
             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
               <div>
-                <p className="text-xs uppercase tracking-[0.25em] text-white/35">Order ID</p>
-                <p className="mt-2 break-all text-white">{order.id}</p>
+                <p className="text-xs uppercase tracking-[0.25em] text-[#6b6b6b]">Order ID</p>
+                <p className="mt-2 break-all text-[#181818]">{order.id}</p>
               </div>
 
               <StatusBadge status={order.status} />
@@ -77,27 +77,27 @@ export default async function AdminOrderDetailsPage({ params }: OrderDetailsPage
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
-            <h2 className="text-2xl font-light text-white">Items</h2>
+          <div className="rounded-[2rem] border border-[#e9d8dc] bg-white p-6 shadow-[0_14px_36px_rgba(179,19,43,0.05)]">
+            <h2 className="text-2xl font-light text-[#181818]">Items</h2>
 
             <div className="mt-5 space-y-4">
               {order.items.map((item) => (
                 <article
                   key={item.id}
-                  className="flex flex-col justify-between gap-4 rounded-2xl border border-white/10 bg-black/20 p-5 md:flex-row md:items-center"
+                  className="flex flex-col justify-between gap-4 rounded-2xl border border-[#e9d8dc] bg-[#faf7f8] p-5 md:flex-row md:items-center"
                 >
                   <div>
-                    <p className="text-white">{item.name}</p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.2em] text-white/35">
+                    <p className="text-[#181818]">{item.name}</p>
+                    <p className="mt-1 text-xs uppercase tracking-[0.2em] text-[#6b6b6b]">
                       SKU {item.productSku} · Quantity {item.quantity}
                     </p>
                   </div>
 
                   <div className="text-left md:text-right">
-                    <p className="text-sm text-white/45">
+                    <p className="text-sm text-[#6b6b6b]">
                       Unit {formatPrice(Number(item.unitPrice), order.currency as "USD")}
                     </p>
-                    <p className="mt-1 text-lg text-white">
+                    <p className="mt-1 text-lg text-[#181818]">
                       {formatPrice(Number(item.lineTotal), order.currency as "USD")}
                     </p>
                   </div>
@@ -108,29 +108,29 @@ export default async function AdminOrderDetailsPage({ params }: OrderDetailsPage
         </div>
 
         <aside className="space-y-6">
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
-            <h2 className="text-2xl font-light text-white">Customer</h2>
+          <div className="rounded-[2rem] border border-[#e9d8dc] bg-white p-6 shadow-[0_14px_36px_rgba(179,19,43,0.05)]">
+            <h2 className="text-2xl font-light text-[#181818]">Customer</h2>
 
-            <div className="mt-5 space-y-2 text-sm leading-6 text-white/60">
+            <div className="mt-5 space-y-2 text-sm leading-6 text-[#6b6b6b]">
               <p>{order.customer.firstName} {order.customer.lastName}</p>
               <p>{order.customer.email}</p>
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
-            <h2 className="text-2xl font-light text-white">Delivery</h2>
+          <div className="rounded-[2rem] border border-[#e9d8dc] bg-white p-6 shadow-[0_14px_36px_rgba(179,19,43,0.05)]">
+            <h2 className="text-2xl font-light text-[#181818]">Delivery</h2>
 
-            <div className="mt-5 space-y-2 text-sm leading-6 text-white/60">
+            <div className="mt-5 space-y-2 text-sm leading-6 text-[#6b6b6b]">
               <p>{address.address}</p>
               <p>{address.city}, {address.postalCode}</p>
               <p>{address.country}</p>
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
-            <h2 className="text-2xl font-light text-white">Payment</h2>
+          <div className="rounded-[2rem] border border-[#e9d8dc] bg-white p-6 shadow-[0_14px_36px_rgba(179,19,43,0.05)]">
+            <h2 className="text-2xl font-light text-[#181818]">Payment</h2>
 
-            <p className="mt-5 break-all text-sm leading-6 text-white/60">
+            <p className="mt-5 break-all text-sm leading-6 text-[#6b6b6b]">
               {order.paymentRef || "Payment reference pending"}
             </p>
           </div>
@@ -142,9 +142,9 @@ export default async function AdminOrderDetailsPage({ params }: OrderDetailsPage
 
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
-      <p className="text-xs uppercase tracking-[0.25em] text-white/35">{label}</p>
-      <p className="mt-2 text-sm text-white">{value}</p>
+    <div className="rounded-2xl border border-[#e9d8dc] bg-[#faf7f8] p-5">
+      <p className="text-xs uppercase tracking-[0.25em] text-[#6b6b6b]">{label}</p>
+      <p className="mt-2 text-sm text-[#181818]">{value}</p>
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import { PaymentClient } from "@/components/payment/payment-client";
+import { Footer } from "@/components/layout/footer";
+import { Navbar } from "@/components/layout/navbar";
 
 export const metadata = {
   title: "Payment | LuxeCommerce",
@@ -8,16 +10,22 @@ export const metadata = {
 
 export default function PaymentPage() {
   return (
-    <main className="min-h-screen bg-[#0d0b08] px-6 py-28 text-[#f8f2e8]">
-      <Suspense
-        fallback={
-          <div className="mx-auto max-w-3xl rounded-[2.5rem] border border-white/10 bg-white/[0.03] p-8 text-white">
-            Preparing payment...
-          </div>
-        }
-      >
-        <PaymentClient />
-      </Suspense>
+    <main className="min-h-screen bg-white text-[#181818]">
+      <Navbar />
+
+      <section className="px-6 py-28 pt-32">
+        <Suspense
+          fallback={
+            <div className="mx-auto max-w-3xl rounded-[2.5rem] border border-[#e9d8dc] bg-white p-8 text-[#181818]">
+              Preparing payment...
+            </div>
+          }
+        >
+          <PaymentClient />
+        </Suspense>
+      </section>
+
+      <Footer />
     </main>
   );
 }

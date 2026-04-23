@@ -6,10 +6,10 @@ type MetricCardProps = {
 
 export function MetricCard({ label, value, helper }: MetricCardProps) {
   return (
-    <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
-      <p className="text-xs uppercase tracking-[0.25em] text-white/35">{label}</p>
-      <p className="mt-4 text-4xl font-light text-white">{value}</p>
-      {helper ? <p className="mt-3 text-sm leading-6 text-white/45">{helper}</p> : null}
+    <div className="rounded-[2rem] border border-[#e9d8dc] bg-white p-6 shadow-[0_14px_36px_rgba(179,19,43,0.05)]">
+      <p className="text-xs uppercase tracking-[0.25em] text-[#6b6b6b]">{label}</p>
+      <p className="mt-4 text-4xl font-light text-[#181818]">{value}</p>
+      {helper ? <p className="mt-3 text-sm leading-6 text-[#6b6b6b]">{helper}</p> : null}
     </div>
   );
 }
@@ -23,12 +23,12 @@ export function StatusBadge({ status }: { status: string }) {
     <span
       className={`inline-flex rounded-full border px-3 py-1 text-[10px] uppercase tracking-[0.2em] ${
         paid
-          ? "border-emerald-300/30 bg-emerald-300/10 text-emerald-200"
+          ? "border-emerald-300/40 bg-emerald-50 text-emerald-700"
           : pending
-            ? "border-[#d6b46a]/30 bg-[#d6b46a]/10 text-[#f0cf82]"
+            ? "border-[#e9d8dc] bg-[#fcebed] text-[#b3132b]"
             : cancelled
-              ? "border-red-300/30 bg-red-300/10 text-red-200"
-              : "border-white/10 bg-white/[0.03] text-white/50"
+              ? "border-red-300/40 bg-red-50 text-red-700"
+              : "border-[#e9d8dc] bg-white text-[#6b6b6b]"
       }`}
     >
       {status.replaceAll("_", " ")}

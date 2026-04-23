@@ -162,176 +162,211 @@ export function AdminProductForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6 md:p-8"
-    >
-      <div className="grid gap-5 md:grid-cols-2">
-        <Field label="SKU">
-          <input
-            value={sku}
-            onChange={(event) => setSku(event.target.value)}
-            disabled={mode === "edit"}
-            className="field-input disabled:cursor-not-allowed disabled:opacity-50"
-            placeholder="LUX-BAG-002"
-          />
-        </Field>
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <FormSection
+        eyebrow="Basic Information"
+        title="Identity and merchandising."
+        description="Define the product's core commerce identity, storefront slug, and taxonomy."
+      >
+        <div className="grid gap-5 md:grid-cols-2">
+          <Field label="SKU">
+            <input
+              value={sku}
+              onChange={(event) => setSku(event.target.value)}
+              disabled={mode === "edit"}
+              className="field-input disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="LUX-BAG-002"
+            />
+          </Field>
 
-        <Field label="Product name">
-          <input
-            value={name}
-            onChange={(event) => handleNameChange(event.target.value)}
-            className="field-input"
-            placeholder="Noir Leather Travel Bag"
-          />
-        </Field>
+          <Field label="Product name">
+            <input
+              value={name}
+              onChange={(event) => handleNameChange(event.target.value)}
+              className="field-input"
+              placeholder="Noir Leather Travel Bag"
+            />
+          </Field>
 
-        <Field label="Slug">
-          <input
-            value={slug}
-            onChange={(event) => setSlug(slugify(event.target.value))}
-            className="field-input"
-            placeholder="noir-leather-travel-bag"
-          />
-        </Field>
+          <Field label="Slug">
+            <input
+              value={slug}
+              onChange={(event) => setSlug(slugify(event.target.value))}
+              className="field-input"
+              placeholder="noir-leather-travel-bag"
+            />
+          </Field>
 
-        <Field label="Status">
-          <select
-            value={status}
-            onChange={(event) => setStatus(event.target.value as typeof status)}
-            className="field-input"
-          >
-            <option value="ACTIVE">Active</option>
-            <option value="DRAFT">Draft</option>
-            <option value="ARCHIVED">Archived</option>
-          </select>
-        </Field>
+          <Field label="Status">
+            <select
+              value={status}
+              onChange={(event) => setStatus(event.target.value as typeof status)}
+              className="field-input"
+            >
+              <option value="ACTIVE">Active</option>
+              <option value="DRAFT">Draft</option>
+              <option value="ARCHIVED">Archived</option>
+            </select>
+          </Field>
 
-        <Field label="Brand">
-          <select
-            value={brandId}
-            onChange={(event) => setBrandId(event.target.value)}
-            className="field-input"
-          >
-            <option value="">Select brand</option>
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
-              </option>
-            ))}
-          </select>
-        </Field>
+          <Field label="Brand">
+            <select
+              value={brandId}
+              onChange={(event) => setBrandId(event.target.value)}
+              className="field-input"
+            >
+              <option value="">Select brand</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </select>
+          </Field>
 
-        <Field label="Category">
-          <select
-            value={categoryId}
-            onChange={(event) => setCategoryId(event.target.value)}
-            className="field-input"
-          >
-            <option value="">Select category</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </Field>
+          <Field label="Category">
+            <select
+              value={categoryId}
+              onChange={(event) => setCategoryId(event.target.value)}
+              className="field-input"
+            >
+              <option value="">Select category</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
+      </FormSection>
 
-        <Field label="Base price">
-          <input
-            value={basePrice}
-            onChange={(event) => setBasePrice(event.target.value)}
-            className="field-input"
-            type="number"
-            min="0"
-            step="0.01"
-          />
-        </Field>
+      <FormSection
+        eyebrow="Pricing and Inventory"
+        title="Commercial controls."
+        description="Manage selling price, compare-at price, available stock, and premium experience toggles."
+      >
+        <div className="grid gap-5 md:grid-cols-2">
+          <Field label="Base price">
+            <input
+              value={basePrice}
+              onChange={(event) => setBasePrice(event.target.value)}
+              className="field-input"
+              type="number"
+              min="0"
+              step="0.01"
+            />
+          </Field>
 
-        <Field label="Compare price">
-          <input
-            value={comparePrice}
-            onChange={(event) => setComparePrice(event.target.value)}
-            className="field-input"
-            type="number"
-            min="0"
-            step="0.01"
-          />
-        </Field>
+          <Field label="Compare price">
+            <input
+              value={comparePrice}
+              onChange={(event) => setComparePrice(event.target.value)}
+              className="field-input"
+              type="number"
+              min="0"
+              step="0.01"
+            />
+          </Field>
 
-        <Field label="Stock">
-          <input
-            value={stock}
-            onChange={(event) => setStock(event.target.value)}
-            className="field-input"
-            type="number"
-            min="0"
-            step="1"
-          />
-        </Field>
+          <Field label="Stock">
+            <input
+              value={stock}
+              onChange={(event) => setStock(event.target.value)}
+              className="field-input"
+              type="number"
+              min="0"
+              step="1"
+            />
+          </Field>
 
-        <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/20 px-5 py-4">
-          <input
-            type="checkbox"
-            checked={has360Viewer}
-            onChange={(event) => setHas360Viewer(event.target.checked)}
-          />
-          <span className="text-sm text-white/65">Enable 360° viewer placeholder</span>
-        </label>
+          <div className="rounded-[1.5rem] border border-[#e9d8dc] bg-[#faf7f8] p-5">
+            <p className="text-xs uppercase tracking-[0.22em] text-[#6b6b6b]">Experience Options</p>
 
-        <Field label="Short description" className="md:col-span-2">
-          <textarea
-            value={shortDescription}
-            onChange={(event) => setShortDescription(event.target.value)}
-            className="field-input min-h-28"
-          />
-        </Field>
+            <label className="mt-4 flex items-center gap-3">
+              <input
+                type="checkbox"
+                checked={has360Viewer}
+                onChange={(event) => setHas360Viewer(event.target.checked)}
+              />
+              <span className="text-sm text-[#181818]">Enable 360° viewer placeholder</span>
+            </label>
 
-        <Field label="Full description" className="md:col-span-2">
-          <textarea
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            className="field-input min-h-36"
-          />
-        </Field>
+            <p className="mt-3 text-sm leading-6 text-[#6b6b6b]">
+              Use this for products that will later receive immersive media and advanced interaction.
+            </p>
+          </div>
+        </div>
+      </FormSection>
 
-        <Field label="Materials, one per line">
-          <textarea
-            value={materials}
-            onChange={(event) => setMaterials(event.target.value)}
-            className="field-input min-h-32"
-          />
-        </Field>
+      <FormSection
+        eyebrow="Storefront Content"
+        title="Editorial storytelling."
+        description="Write concise customer-facing product content and rich commerce details."
+      >
+        <div className="grid gap-5">
+          <Field label="Short description">
+            <textarea
+              value={shortDescription}
+              onChange={(event) => setShortDescription(event.target.value)}
+              className="field-input min-h-28"
+            />
+          </Field>
 
-        <Field label="Features, one per line">
-          <textarea
-            value={features}
-            onChange={(event) => setFeatures(event.target.value)}
-            className="field-input min-h-32"
-          />
-        </Field>
+          <Field label="Full description">
+            <textarea
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              className="field-input min-h-40"
+            />
+          </Field>
+        </div>
+      </FormSection>
 
-        <Field label="Image paths, one per line" className="md:col-span-2">
-          <textarea
-            value={images}
-            onChange={(event) => setImages(event.target.value)}
-            className="field-input min-h-32"
-            placeholder="/products/example-1.jpg"
-          />
-        </Field>
-      </div>
+      <FormSection
+        eyebrow="Structured Content"
+        title="Materials, features, and imagery."
+        description="Enter one value per line so the product detail page stays clean and structured."
+      >
+        <div className="grid gap-5 md:grid-cols-2">
+          <Field label="Materials, one per line">
+            <textarea
+              value={materials}
+              onChange={(event) => setMaterials(event.target.value)}
+              className="field-input min-h-36"
+            />
+          </Field>
+
+          <Field label="Features, one per line">
+            <textarea
+              value={features}
+              onChange={(event) => setFeatures(event.target.value)}
+              className="field-input min-h-36"
+            />
+          </Field>
+
+          <Field label="Image paths, one per line" className="md:col-span-2">
+            <textarea
+              value={images}
+              onChange={(event) => setImages(event.target.value)}
+              className="field-input min-h-36"
+              placeholder="/products/example-1.jpg"
+            />
+          </Field>
+        </div>
+      </FormSection>
 
       {message ? (
-        <div className="mt-6 rounded-2xl border border-red-400/30 bg-red-400/10 p-5 text-sm text-red-200">
+        <div className="rounded-2xl border border-red-300/40 bg-red-50 p-5 text-sm text-[#8e1023]">
           {message}
         </div>
       ) : null}
 
-      <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-full bg-[#d6b46a] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-black transition hover:bg-[#f0cf82] disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-full bg-[#b3132b] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#8e1023] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? "Saving..." : mode === "create" ? "Create Product" : "Update Product"}
         </button>
@@ -339,12 +374,33 @@ export function AdminProductForm({
         <button
           type="button"
           onClick={() => router.push("/admin/products")}
-          className="rounded-full border border-white/20 px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-[#d6b46a] hover:text-[#d6b46a]"
+          className="rounded-full border border-[#e9d8dc] bg-white px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#181818] transition hover:border-[#b3132b] hover:text-[#b3132b]"
         >
           Cancel
         </button>
       </div>
     </form>
+  );
+}
+
+function FormSection({
+  eyebrow,
+  title,
+  description,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-[2rem] border border-[#e9d8dc] bg-white p-6 shadow-[0_14px_36px_rgba(179,19,43,0.05)] md:p-8">
+      <p className="text-xs uppercase tracking-[0.25em] text-[#b3132b]">{eyebrow}</p>
+      <h2 className="mt-3 text-3xl font-light text-[#181818]">{title}</h2>
+      <p className="mt-3 max-w-3xl text-sm leading-7 text-[#6b6b6b]">{description}</p>
+      <div className="mt-8">{children}</div>
+    </section>
   );
 }
 
@@ -359,7 +415,7 @@ function Field({
 }) {
   return (
     <label className={className}>
-      <span className="text-xs uppercase tracking-[0.22em] text-white/45">{label}</span>
+      <span className="text-xs uppercase tracking-[0.22em] text-[#6b6b6b]">{label}</span>
       <div className="mt-3">{children}</div>
     </label>
   );
