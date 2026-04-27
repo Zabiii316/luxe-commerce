@@ -29,6 +29,9 @@ export function Navbar() {
           <Link href="/products" className="hidden transition hover:text-[#b3132b] sm:block">
             Search
           </Link>
+          <Link href="/account" className="transition hover:text-[#b3132b]">
+            Account
+          </Link>
           <WishlistLink />
           <CartLink />
         </div>
