@@ -1,164 +1,201 @@
+import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@luxe/database";
-import { createOrderSchema } from "@/lib/validators/checkout";
+import { getProductsBySkus } from "@/lib/data/products";
+import { checkoutCustomerSchema } from "@/lib/validators/checkout";
 
-const PRICE_TOLERANCE = 0.01;
-
-function createOrderId() {
-  return `LUX-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-}
+const orderCreateSchema = z.object({
+  customer: checkoutCustomerSchema,
+  couponCode: z.string().optional().or(z.literal("")),
+  clientSubtotal: z.number().nonnegative(),
+  lineItems: z
+    .array(
+      z.object({
+        sku: z.string().min(1),
+        quantity: z.number().int().min(1),
+        clientUnitPrice: z.number().nonnegative(),
+      }),
+    )
+    .min(1),
+});
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const parsed = createOrderSchema.safeParse(body);
+    const parsed = orderCreateSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
-        {
-          ok: false,
-          message: "Invalid order request",
-          errors: parsed.error.flatten(),
-        },
+        { ok: false, message: "Invalid checkout data", errors: parsed.error.flatten() },
         { status: 400 },
       );
     }
 
-    const { customer, lineItems, clientSubtotal } = parsed.data;
-    const orderId = createOrderId();
+    const { customer, lineItems } = parsed.data;
+    const requestedCoupon = parsed.data.couponCode?.trim().toUpperCase() || "";
 
-    const createdOrder = await prisma.$transaction(async (tx) => {
-      const databaseProducts = await tx.product.findMany({
-        where: {
-          sku: {
-            in: lineItems.map((item) => item.sku),
-          },
-          status: "ACTIVE",
-        },
-        include: {
-          brand: true,
-          category: true,
-        },
-      });
+    const products = await getProductsBySkus(lineItems.map((item) => item.sku));
 
-      const productMap = new Map(databaseProducts.map((product) => [product.sku, product]));
+    if (!products.length || products.length !== lineItems.length) {
+      return NextResponse.json(
+        { ok: false, message: "Some products are no longer available." },
+        { status: 400 },
+      );
+    }
 
-      const serverItems = lineItems.map((item) => {
-        const product = productMap.get(item.sku);
+    const productMap = new Map(products.map((product) => [product.sku, product]));
 
-        if (!product) {
-          throw new Error(`Product not found: ${item.sku}`);
-        }
+    let subtotal = 0;
+    const orderItems = lineItems.map((item) => {
+      const product = productMap.get(item.sku);
 
-        if (item.quantity > product.stock) {
-          throw new Error(`Only ${product.stock} pieces available for ${product.name}`);
-        }
-
-        const serverUnitPrice = Number(product.basePrice);
-
-        return {
-          sku: product.sku,
-          name: product.name,
-          slug: product.slug,
-          brand: product.brand.name,
-          quantity: item.quantity,
-          serverUnitPrice,
-          lineTotal: serverUnitPrice * item.quantity,
-        };
-      });
-
-      const serverSubtotal = serverItems.reduce((sum, item) => sum + item.lineTotal, 0);
-
-      if (Math.abs(serverSubtotal - clientSubtotal) > PRICE_TOLERANCE) {
-        throw new Error("Price has changed. Please review your cart before placing the order.");
+      if (!product) {
+        throw new Error(`Product ${item.sku} not found`);
       }
 
-      for (const item of serverItems) {
-        const stockUpdate = await tx.product.updateMany({
-          where: {
-            sku: item.sku,
-            stock: {
-              gte: item.quantity,
-            },
-          },
-          data: {
-            stock: {
-              decrement: item.quantity,
-            },
-          },
-        });
-
-        if (stockUpdate.count !== 1) {
-          throw new Error(`Insufficient stock for ${item.name}. Please review your cart.`);
-        }
+      if (product.stock < item.quantity) {
+        throw new Error(`${product.name} does not have enough stock`);
       }
 
-      const customerRecord = await tx.customer.upsert({
+      const unitPrice = product.price;
+      const lineTotal = unitPrice * item.quantity;
+      subtotal += lineTotal;
+
+      return {
+        productSku: product.sku,
+        name: product.name,
+        quantity: item.quantity,
+        unitPrice,
+        lineTotal,
+      };
+    });
+
+    let discountCode: string | null = null;
+    let discountAmount = 0;
+
+    if (requestedCoupon) {
+      const now = new Date();
+
+      const discount = await prisma.discountCode.findFirst({
         where: {
-          email: customer.email,
-        },
-        update: {
-          firstName: customer.firstName,
-          lastName: customer.lastName,
-        },
-        create: {
-          email: customer.email,
-          firstName: customer.firstName,
-          lastName: customer.lastName,
+          code: requestedCoupon,
+          isActive: true,
+          OR: [{ startsAt: null }, { startsAt: { lte: now } }],
+          AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }],
         },
       });
 
-      return tx.order.create({
+      if (!discount) {
+        return NextResponse.json(
+          { ok: false, message: "This discount code is invalid or expired." },
+          { status: 400 },
+        );
+      }
+
+      if (discount.usageLimit != null && discount.usedCount >= discount.usageLimit) {
+        return NextResponse.json(
+          { ok: false, message: "This discount code has reached its usage limit." },
+          { status: 400 },
+        );
+      }
+
+      if (discount.minOrderAmount != null && subtotal < Number(discount.minOrderAmount)) {
+        return NextResponse.json(
+          {
+            ok: false,
+            message: `This code requires a minimum order of $${Number(discount.minOrderAmount).toFixed(2)}.`,
+          },
+          { status: 400 },
+        );
+      }
+
+      discountCode = discount.code;
+
+      if (discount.type === "PERCENT") {
+        discountAmount = subtotal * (Number(discount.value) / 100);
+      } else {
+        discountAmount = Number(discount.value);
+      }
+
+      if (discountAmount > subtotal) {
+        discountAmount = subtotal;
+      }
+    }
+
+    const total = Math.max(0, subtotal - discountAmount);
+
+    const savedCustomer = await prisma.customer.upsert({
+      where: {
+        email: customer.email.toLowerCase().trim(),
+      },
+      update: {
+        firstName: customer.firstName,
+        lastName: customer.lastName,
+      },
+      create: {
+        firstName: customer.firstName,
+        lastName: customer.lastName,
+        email: customer.email.toLowerCase().trim(),
+      },
+      select: {
+        id: true,
+        email: true,
+      },
+    });
+
+    const order = await prisma.$transaction(async (tx) => {
+      const createdOrder = await tx.order.create({
         data: {
-          id: orderId,
-          customerId: customerRecord.id,
-          status: "PAYMENT_PENDING",
-          subtotal: serverSubtotal,
+          id: randomUUID(),
+          customer: {
+            connect: {
+              email: savedCustomer.email,
+            },
+          },
           currency: "USD",
+          subtotal,
+          discountCode,
+          discountAmount,
+          total,
+          status: "PAYMENT_PENDING",
           address: {
             address: customer.address,
             city: customer.city,
             country: customer.country,
             postalCode: customer.postalCode,
           },
-          paymentRef: `pi_mock_${orderId.toLowerCase()}`,
           items: {
-            create: serverItems.map((item) => ({
-              productSku: item.sku,
-              name: item.name,
-              quantity: item.quantity,
-              unitPrice: item.serverUnitPrice,
-              lineTotal: item.lineTotal,
-            })),
+            create: orderItems,
           },
         },
-        include: {
-          items: true,
-          customer: true,
+        select: {
+          id: true,
         },
       });
-    });
 
-    const mockPaymentIntent = {
-      id: `pi_mock_${orderId.toLowerCase()}`,
-      amount: Math.round(Number(createdOrder.subtotal) * 100),
-      currency: "usd",
-      status: "requires_payment_method",
-    };
+      if (discountCode) {
+        await tx.discountCode.update({
+          where: { code: discountCode },
+          data: {
+            usedCount: {
+              increment: 1,
+            },
+          },
+        });
+      }
+
+      return createdOrder;
+    });
 
     return NextResponse.json({
       ok: true,
-      message: "Order created successfully",
-      order: createdOrder,
-      paymentIntent: mockPaymentIntent,
+      order,
     });
   } catch (error) {
     return NextResponse.json(
-      {
-        ok: false,
-        message: error instanceof Error ? error.message : "Order creation failed",
-      },
-      { status: 400 },
+      { ok: false, message: error instanceof Error ? error.message : "Order creation failed" },
+      { status: 500 },
     );
   }
 }

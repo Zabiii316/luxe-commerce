@@ -11,6 +11,18 @@ type AccountOrderDetailsPageProps = {
   }>;
 };
 
+function getDisplayTotal(order: {
+  subtotal: number;
+  discountAmount: number;
+  total: number;
+}) {
+  if (order.discountAmount > 0) {
+    return order.total;
+  }
+
+  return order.total > 0 ? order.total : order.subtotal;
+}
+
 export async function generateMetadata({ params }: AccountOrderDetailsPageProps) {
   const { id } = await params;
 
@@ -49,6 +61,11 @@ export default async function AccountOrderDetailsPage({
     country?: string;
     postalCode?: string;
   };
+
+  const subtotal = Number(order.subtotal);
+  const discountAmount = Number(order.discountAmount);
+  const total = Number(order.total);
+  const displayTotal = getDisplayTotal({ subtotal, discountAmount, total });
 
   return (
     <AccountShell
@@ -96,10 +113,24 @@ export default async function AccountOrderDetailsPage({
             <p className="mt-5 text-xs uppercase tracking-[0.25em] text-[#6b6b6b]">Status</p>
             <p className="mt-2 text-sm text-[#181818]">{order.status.replaceAll("_", " ")}</p>
 
-            <p className="mt-5 text-xs uppercase tracking-[0.25em] text-[#6b6b6b]">Total</p>
-            <p className="mt-2 text-xl text-[#181818]">
-              {formatPrice(Number(order.subtotal), order.currency as "USD")}
-            </p>
+            <div className="mt-5 space-y-3 text-sm text-[#6b6b6b]">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span>{formatPrice(subtotal, order.currency as "USD")}</span>
+              </div>
+
+              {order.discountCode ? (
+                <div className="flex justify-between">
+                  <span>Discount ({order.discountCode})</span>
+                  <span>-{formatPrice(discountAmount, order.currency as "USD")}</span>
+                </div>
+              ) : null}
+
+              <div className="flex justify-between border-t border-[#e9d8dc] pt-3 text-base text-[#181818]">
+                <span>Total</span>
+                <span>{formatPrice(displayTotal, order.currency as "USD")}</span>
+              </div>
+            </div>
           </div>
 
           <div className="rounded-[2rem] border border-[#e9d8dc] bg-white p-6 shadow-[0_14px_36px_rgba(179,19,43,0.05)]">

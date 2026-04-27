@@ -95,6 +95,9 @@ model Order {
   customerId  String
   status      OrderStatus @default(PAYMENT_PENDING)
   subtotal    Decimal     @db.Decimal(12, 2)
+  total          Decimal  @default(0)
+  discountCode   String?
+  discountAmount Decimal  @default(0)
   currency    String      @default("USD")
   address     Json
   paymentRef  String?
@@ -143,4 +146,30 @@ model Review {
   @@index([productSku])
   @@index([isApproved])
   @@map("reviews")
+}
+
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+
+
+model DiscountCode {
+  id             String       @id @default(cuid())
+  code           String       @unique
+  type           DiscountType
+  value          Decimal
+  minOrderAmount Decimal?
+  usageLimit     Int?
+  usedCount      Int          @default(0)
+  isActive       Boolean      @default(true)
+  startsAt       DateTime?
+  endsAt         DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+  @@map("discount_codes")
 }

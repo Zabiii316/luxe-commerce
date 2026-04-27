@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(Number(order.subtotal) * 100),
+      amount: Math.round((Number(order.total) > 0 ? Number(order.total) : Number(order.subtotal)) * 100),
       currency: order.currency.toLowerCase(),
       automatic_payment_methods: {
         enabled: true,

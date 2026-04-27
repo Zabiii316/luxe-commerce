@@ -13,20 +13,15 @@ import {
 } from "@/lib/validators/checkout";
 
 type OrderStatus =
-  | {
-      type: "idle";
-      message: "";
-    }
-  | {
-      type: "success" | "error";
-      message: string;
-    };
+  | { type: "idle"; message: "" }
+  | { type: "success" | "error"; message: string };
 
 export function CheckoutForm() {
   const router = useRouter();
   const items = useCartStore((state) => state.items);
   const subtotal = useCartStore((state) => state.getSubtotal());
   const clearCart = useCartStore((state) => state.clearCart);
+  const [couponCode, setCouponCode] = useState("");
   const [status, setStatus] = useState<OrderStatus>({ type: "idle", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -59,6 +54,7 @@ export function CheckoutForm() {
         },
         body: JSON.stringify({
           customer,
+          couponCode,
           clientSubtotal: subtotal,
           lineItems: items.map((item) => ({
             sku: item.sku,
@@ -122,46 +118,24 @@ export function CheckoutForm() {
         </h1>
 
         <div className="mt-10 grid gap-5 md:grid-cols-2">
-          <Field
-            label="First name"
-            error={errors.firstName?.message}
-            inputProps={register("firstName")}
-          />
+          <Field label="First name" error={errors.firstName?.message} inputProps={register("firstName")} />
+          <Field label="Last name" error={errors.lastName?.message} inputProps={register("lastName")} />
 
-          <Field
-            label="Last name"
-            error={errors.lastName?.message}
-            inputProps={register("lastName")}
-          />
-
-          <Field
-            label="Email address"
-            error={errors.email?.message}
-            inputProps={register("email")}
-            className="md:col-span-2"
-          />
-
-          <Field
-            label="Address"
-            error={errors.address?.message}
-            inputProps={register("address")}
-            className="md:col-span-2"
-          />
-
+          <Field label="Email address" error={errors.email?.message} inputProps={register("email")} className="md:col-span-2" />
+          <Field label="Address" error={errors.address?.message} inputProps={register("address")} className="md:col-span-2" />
           <Field label="City" error={errors.city?.message} inputProps={register("city")} />
+          <Field label="Country" error={errors.country?.message} inputProps={register("country")} />
+          <Field label="Postal code" error={errors.postalCode?.message} inputProps={register("postalCode")} className="md:col-span-2" />
 
-          <Field
-            label="Country"
-            error={errors.country?.message}
-            inputProps={register("country")}
-          />
-
-          <Field
-            label="Postal code"
-            error={errors.postalCode?.message}
-            inputProps={register("postalCode")}
-            className="md:col-span-2"
-          />
+          <label className="md:col-span-2">
+            <span className="text-xs uppercase tracking-[0.22em] text-[#6b6b6b]">Discount code</span>
+            <input
+              value={couponCode}
+              onChange={(event) => setCouponCode(event.target.value.toUpperCase())}
+              className="field-input mt-3"
+              placeholder="WELCOME10"
+            />
+          </label>
         </div>
 
         {status.type !== "idle" ? (
@@ -202,13 +176,12 @@ export function CheckoutForm() {
         </div>
 
         <div className="mt-6 flex justify-between text-xl text-[#181818]">
-          <span>Total</span>
+          <span>Subtotal</span>
           <span>{formatPrice(subtotal)}</span>
         </div>
 
         <p className="mt-6 text-xs leading-6 text-[#6b6b6b]">
-          The browser subtotal is submitted only for comparison. The server recomputes the
-          authoritative total before creating the order.
+          Discount codes are validated on the server when the order is created.
         </p>
       </aside>
     </div>
@@ -226,12 +199,7 @@ function Field({ label, error, className = "", inputProps }: FieldProps) {
   return (
     <label className={className}>
       <span className="text-xs uppercase tracking-[0.22em] text-[#6b6b6b]">{label}</span>
-
-      <input
-        {...inputProps}
-        className="field-input mt-3"
-      />
-
+      <input {...inputProps} className="field-input mt-3" />
       {error ? <span className="mt-2 block text-sm text-[#b3132b]">{error}</span> : null}
     </label>
   );

@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { formatPrice } from "@/lib/utils/money";
 
 type IntentStatus =
   | {
@@ -23,8 +24,26 @@ type IntentStatus =
       clientSecret?: undefined;
     };
 
+type OrderSummary = {
+  id: string;
+  subtotal: number;
+  discountCode: string | null;
+  discountAmount: number;
+  total: number;
+  currency: "USD";
+  status: string;
+};
+
 const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 const stripePromise = publishableKey ? loadStripe(publishableKey) : null;
+
+function getDisplayTotal(summary: OrderSummary) {
+  if (summary.discountAmount > 0) {
+    return summary.total;
+  }
+
+  return summary.total > 0 ? summary.total : summary.subtotal;
+}
 
 export function PaymentClient() {
   const searchParams = useSearchParams();
@@ -35,8 +54,10 @@ export function PaymentClient() {
     message: "Preparing secure payment...",
   });
 
+  const [summary, setSummary] = useState<OrderSummary | null>(null);
+
   useEffect(() => {
-    async function createIntent() {
+    async function preparePayment() {
       if (!orderId) {
         setStatus({
           type: "error",
@@ -55,28 +76,36 @@ export function PaymentClient() {
       }
 
       try {
-        const response = await fetch("/api/payments/create-intent", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ orderId }),
-        });
+        const [intentResponse, summaryResponse] = await Promise.all([
+          fetch("/api/payments/create-intent", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ orderId }),
+          }),
+          fetch(`/api/orders/${encodeURIComponent(orderId)}/summary`),
+        ]);
 
-        const data = await response.json();
+        const intentData = await intentResponse.json();
+        const summaryData = await summaryResponse.json();
 
-        if (!response.ok || !data.ok || !data.clientSecret) {
+        if (!intentResponse.ok || !intentData.ok || !intentData.clientSecret) {
           setStatus({
             type: "error",
-            message: data.message || "Unable to prepare payment.",
+            message: intentData.message || "Unable to prepare payment.",
           });
           return;
+        }
+
+        if (summaryResponse.ok && summaryData.ok && summaryData.order) {
+          setSummary(summaryData.order);
         }
 
         setStatus({
           type: "ready",
           message: "Payment ready.",
-          clientSecret: data.clientSecret,
+          clientSecret: intentData.clientSecret,
         });
       } catch {
         setStatus({
@@ -86,7 +115,7 @@ export function PaymentClient() {
       }
     }
 
-    createIntent();
+    preparePayment();
   }, [orderId]);
 
   const options = useMemo(
@@ -137,6 +166,31 @@ export function PaymentClient() {
       title="Secure payment"
       message="Complete payment using Stripe Payment Element. Card details are collected by Stripe, not LuxeCommerce."
     >
+      {summary ? (
+        <div className="mt-8 rounded-[2rem] border border-[#e9d8dc] bg-[#faf7f8] p-6">
+          <p className="text-sm uppercase tracking-[0.25em] text-[#b3132b]">Order Summary</p>
+
+          <div className="mt-5 space-y-3 text-sm text-[#6b6b6b]">
+            <div className="flex justify-between">
+              <span>Subtotal</span>
+              <span>{formatPrice(summary.subtotal, summary.currency)}</span>
+            </div>
+
+            {summary.discountCode ? (
+              <div className="flex justify-between">
+                <span>Discount ({summary.discountCode})</span>
+                <span>-{formatPrice(summary.discountAmount, summary.currency)}</span>
+              </div>
+            ) : null}
+
+            <div className="flex justify-between border-t border-[#e9d8dc] pt-3 text-base text-[#181818]">
+              <span>Total</span>
+              <span>{formatPrice(getDisplayTotal(summary), summary.currency)}</span>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <Elements stripe={stripePromise} options={options}>
         <StripePaymentForm orderId={orderId || ""} />
       </Elements>
@@ -203,7 +257,7 @@ function PaymentShell({
 }: {
   title: string;
   message: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <div className="mx-auto max-w-3xl rounded-[2.5rem] border border-[#e9d8dc] bg-white p-8 shadow-[0_18px_50px_rgba(179,19,43,0.06)] md:p-12">

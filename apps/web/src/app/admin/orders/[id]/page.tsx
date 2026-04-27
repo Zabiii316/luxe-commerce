@@ -11,6 +11,18 @@ type OrderDetailsPageProps = {
   }>;
 };
 
+function getDisplayTotal(order: {
+  subtotal: number;
+  discountAmount: number;
+  total: number;
+}) {
+  if (order.discountAmount > 0) {
+    return order.total;
+  }
+
+  return order.total > 0 ? order.total : order.subtotal;
+}
+
 export async function generateMetadata({ params }: OrderDetailsPageProps) {
   const { id } = await params;
 
@@ -43,6 +55,11 @@ export default async function AdminOrderDetailsPage({ params }: OrderDetailsPage
     postalCode?: string;
   };
 
+  const subtotal = Number(order.subtotal);
+  const discountAmount = Number(order.discountAmount);
+  const total = Number(order.total);
+  const displayTotal = getDisplayTotal({ subtotal, discountAmount, total });
+
   return (
     <AdminShell
       eyebrow="Order Details"
@@ -70,10 +87,18 @@ export default async function AdminOrderDetailsPage({ params }: OrderDetailsPage
               <StatusBadge status={order.status} />
             </div>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
+            <div className="mt-6 grid gap-4 md:grid-cols-4">
               <InfoCard label="Created" value={formatAdminDate(order.createdAt)} />
-              <InfoCard label="Total" value={formatPrice(Number(order.subtotal), order.currency as "USD")} />
-              <InfoCard label="Currency" value={order.currency} />
+              <InfoCard label="Subtotal" value={formatPrice(subtotal, order.currency as "USD")} />
+              <InfoCard
+                label="Discount"
+                value={
+                  order.discountCode
+                    ? `-${formatPrice(discountAmount, order.currency as "USD")} (${order.discountCode})`
+                    : "—"
+                }
+              />
+              <InfoCard label="Total" value={formatPrice(displayTotal, order.currency as "USD")} />
             </div>
           </div>
 

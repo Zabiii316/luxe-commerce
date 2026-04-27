@@ -44,6 +44,18 @@ function getStatusDescription(status: string) {
   return "Your order is being processed by LuxeCommerce.";
 }
 
+function getDisplayTotal(order: {
+  subtotal: number;
+  discountAmount: number;
+  total: number;
+}) {
+  if (order.discountAmount > 0) {
+    return order.total;
+  }
+
+  return order.total > 0 ? order.total : order.subtotal;
+}
+
 export default async function CheckoutSuccessPage({ searchParams }: SuccessPageProps) {
   const { orderId } = await searchParams;
 
@@ -122,6 +134,11 @@ export default async function CheckoutSuccessPage({ searchParams }: SuccessPageP
     postalCode?: string;
   };
 
+  const subtotal = Number(order.subtotal);
+  const discountAmount = Number(order.discountAmount);
+  const total = Number(order.total);
+  const displayTotal = getDisplayTotal({ subtotal, discountAmount, total });
+
   return (
     <main className="min-h-screen bg-white text-[#181818]">
       <Navbar />
@@ -167,7 +184,7 @@ export default async function CheckoutSuccessPage({ searchParams }: SuccessPageP
               <div className="rounded-2xl border border-[#e9d8dc] bg-[#faf7f8] p-5">
                 <p className="text-xs uppercase tracking-[0.25em] text-[#6b6b6b]">Total</p>
                 <p className="mt-2 text-2xl font-light text-[#181818]">
-                  {formatPrice(Number(order.subtotal), order.currency as "USD")}
+                  {formatPrice(displayTotal, order.currency as "USD")}
                 </p>
               </div>
             </div>
@@ -203,14 +220,37 @@ export default async function CheckoutSuccessPage({ searchParams }: SuccessPageP
               </div>
 
               <aside className="h-fit rounded-2xl border border-[#e9d8dc] bg-[#faf7f8] p-5">
-                <h2 className="text-2xl font-light text-[#181818]">Delivery Details</h2>
+                <h2 className="text-2xl font-light text-[#181818]">Pricing</h2>
 
-                <div className="mt-5 space-y-3 text-sm leading-6 text-[#6b6b6b]">
-                  <p>{address.address}</p>
-                  <p>
-                    {address.city}, {address.postalCode}
-                  </p>
-                  <p>{address.country}</p>
+                <div className="mt-5 space-y-3 text-sm text-[#6b6b6b]">
+                  <div className="flex justify-between">
+                    <span>Subtotal</span>
+                    <span>{formatPrice(subtotal, order.currency as "USD")}</span>
+                  </div>
+
+                  {order.discountCode ? (
+                    <div className="flex justify-between">
+                      <span>Discount ({order.discountCode})</span>
+                      <span>-{formatPrice(discountAmount, order.currency as "USD")}</span>
+                    </div>
+                  ) : null}
+
+                  <div className="flex justify-between border-t border-[#e9d8dc] pt-3 text-base text-[#181818]">
+                    <span>Total</span>
+                    <span>{formatPrice(displayTotal, order.currency as "USD")}</span>
+                  </div>
+                </div>
+
+                <div className="mt-6 border-t border-[#e9d8dc] pt-5">
+                  <h3 className="text-lg font-light text-[#181818]">Delivery Details</h3>
+
+                  <div className="mt-4 space-y-3 text-sm leading-6 text-[#6b6b6b]">
+                    <p>{address.address}</p>
+                    <p>
+                      {address.city}, {address.postalCode}
+                    </p>
+                    <p>{address.country}</p>
+                  </div>
                 </div>
 
                 <div className="mt-6 border-t border-[#e9d8dc] pt-5">
