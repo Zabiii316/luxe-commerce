@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
+import { ProductReviews } from "@/components/product/product-reviews";
 import { AddToWishlistButton } from "@/components/wishlist/add-to-wishlist-button";
 import { getProductBySlug, getProducts } from "@/lib/data/products";
+import { getProductReviewsBySlug } from "@/lib/data/reviews";
 import { formatPrice } from "@/lib/utils/money";
 
 type ProductPageProps = {
@@ -39,7 +41,11 @@ export async function generateMetadata({ params }: ProductPageProps) {
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+
+  const [product, reviews] = await Promise.all([
+    getProductBySlug(slug),
+    getProductReviewsBySlug(slug),
+  ]);
 
   if (!product) {
     notFound();
@@ -171,6 +177,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               </div>
             </div>
           </aside>
+        </div>
+      </section>
+
+      <section className="border-t border-[#e9d8dc] bg-[#faf7f8] px-6 py-20">
+        <div className="mx-auto max-w-7xl">
+          <ProductReviews productSlug={product.slug} initialReviews={reviews} />
         </div>
       </section>
 

@@ -69,6 +69,7 @@ model Product {
   brand            Brand         @relation(fields: [brandId], references: [id])
   category         Category      @relation(fields: [categoryId], references: [id])
   orderItems       OrderItem[]
+  reviews          Review[]
 
   @@index([categoryId])
   @@index([brandId])
@@ -121,4 +122,24 @@ model OrderItem {
   @@index([orderId])
   @@index([productSku])
   @@map("order_items")
+}
+
+
+model Review {
+  id         String   @id @default(cuid())
+  productSku String
+  name       String
+  email      String?
+  rating     Int
+  title      String
+  comment    String
+  isApproved Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  product    Product  @relation(fields: [productSku], references: [sku])
+
+  @@index([productSku])
+  @@index([isApproved])
+  @@map("reviews")
 }
