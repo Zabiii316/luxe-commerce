@@ -1,23 +1,21 @@
-import { randomUUID } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
-import path from "path";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { uploadProductImageToCloudinary } from "@/lib/storage/cloudinary";
 
 export const runtime = "nodejs";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-const allowedTypes = new Map<string, string>([
-  ["image/jpeg", ".jpg"],
-  ["image/png", ".png"],
-  ["image/webp", ".webp"],
+const allowedTypes = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
 ]);
 
 export async function POST(request: Request) {
   const session = await auth();
 
-  if (!session?.user) {
+  if ((session?.user as { role?: string } | undefined)?.role !== "admin") {
     return NextResponse.json(
       {
         ok: false,
@@ -29,6 +27,7 @@ export async function POST(request: Request) {
 
   try {
     const formData = await request.formData();
+
     const files = formData
       .getAll("files")
       .filter((file): file is File => file instanceof File && file.size > 0);
@@ -43,9 +42,6 @@ export async function POST(request: Request) {
       );
     }
 
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "products");
-    await mkdir(uploadDir, { recursive: true });
-
     const uploadedFiles: string[] = [];
 
     for (const file of files) {
@@ -59,9 +55,7 @@ export async function POST(request: Request) {
         );
       }
 
-      const extension = allowedTypes.get(file.type);
-
-      if (!extension) {
+      if (!allowedTypes.has(file.type)) {
         return NextResponse.json(
           {
             ok: false,
@@ -72,11 +66,13 @@ export async function POST(request: Request) {
       }
 
       const buffer = Buffer.from(await file.arrayBuffer());
-      const filename = `${Date.now()}-${randomUUID()}${extension}`;
-      const filepath = path.join(uploadDir, filename);
 
-      await writeFile(filepath, buffer);
-      uploadedFiles.push(`/uploads/products/${filename}`);
+      const url = await uploadProductImageToCloudinary({
+        buffer,
+        contentType: file.type,
+      });
+
+      uploadedFiles.push(url);
     }
 
     return NextResponse.json({
