@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "@luxe/database";
 import { getProductsBySkus } from "@/lib/data/products";
 import { checkoutCustomerSchema } from "@/lib/validators/checkout";
+import { sendOrderCreatedEmails } from "@/lib/email/send-order-created-emails";
 
 const orderCreateSchema = z.object({
   customer: checkoutCustomerSchema,
@@ -187,6 +188,8 @@ export async function POST(request: Request) {
 
       return createdOrder;
     });
+
+    await sendOrderCreatedEmails(order.id);
 
     return NextResponse.json({
       ok: true,
