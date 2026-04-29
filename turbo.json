@@ -1,5 +1,4 @@
 {
-  "$schema": "https://turbo.build/schema.json",
   "ui": "stream",
   "tasks": {
     "dev": {
@@ -8,7 +7,25 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "DATABASE_URL",
+        "DIRECT_URL",
+        "NEXT_PUBLIC_APP_URL",
+        "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+        "STRIPE_SECRET_KEY",
+        "STRIPE_WEBHOOK_SECRET",
+        "RESEND_API_KEY",
+        "EMAIL_FROM",
+        "ADMIN_ALERT_EMAIL",
+        "CLOUDINARY_CLOUD_NAME",
+        "CLOUDINARY_API_KEY",
+        "CLOUDINARY_API_SECRET",
+        "ADMIN_EMAIL",
+        "ADMIN_PASSWORD",
+        "NEXTAUTH_SECRET",
+        "AUTH_SECRET"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
